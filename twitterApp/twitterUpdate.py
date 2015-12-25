@@ -1,5 +1,4 @@
 from flask import Flask, g, render_template, request
-from twitterSearchEngine import searchTwitter
 from pymongo import MongoClient, ASCENDING
 from time import time
 
@@ -93,4 +92,8 @@ def displayUsers():
     return render_template('databasePage.html', userList = userList)
     
 if __name__ == '__main__':
+    # Import twitterSearchEngine only when the application is
+    # being run. Otherwise, it is the 'twitterUpdate' module
+    from twitterSearchEngine import searchTwitter
+    testTwitterSearchEngine()
     app.run(host = '0.0.0.0')
