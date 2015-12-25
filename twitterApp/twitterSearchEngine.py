@@ -22,10 +22,10 @@ try:
     currentDir = getcwd()
 
     if projDir not in currentDir:
-	projDir = currentDir + projDir
+        projDir = currentDir + projDir
 
     else:
-	projDir = currentDir
+        projDir = currentDir
 
     jsonFile = projDir + "/twitterConfig.json"
     jsonData = open(jsonFile, 'r')
@@ -34,9 +34,9 @@ try:
 except:
     print "Missing 'twitterConfig.json' file!"
     print "Aborting Twitter access immediately"
-    
+
     import sys
-    sys.exit(-1)    
+    sys.exit(-1)
 
 try:
     auth = OAuthHandler(authData['consumer_key'], authData['consumer_secret'])
@@ -52,9 +52,10 @@ except:
 
 doesNotExistMessage = "[{u'message': u'Sorry, that page does not exist', u'code': 34}]"
 
+
 def searchTwitter(screen_name, user_id):
     try:
-        user = api.get_user(screen_name = screen_name, user_id = user_id)
+        user = api.get_user(screen_name=screen_name, user_id=user_id)
 
         # The Twitter API gives precedence to screen_name over user_id.
         # However, we do not want that to happen to avoid erroneous
@@ -76,9 +77,11 @@ def searchTwitter(screen_name, user_id):
         favorites_count = user.favourites_count
         image_url = user.profile_image_url_https
         timestamp = time()
-        
-        return screen_name, user_id, creation_date, friend_count, follower_count, \
-               org_count, tweet_count, favorites_count, image_url, timestamp
-    
+
+        return screen_name, user_id, creation_date, friend_count, \
+               follower_count, org_count, tweet_count, favorites_count, \
+               image_url, timestamp
+
     except TweepError, TweepErrorMessage:
-        return "Twitter was unable to process your request: " + str(TweepErrorMessage)
+        return "Twitter was unable to process your request: " + \
+               str(TweepErrorMessage)

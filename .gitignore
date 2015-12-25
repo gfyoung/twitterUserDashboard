@@ -1,0 +1,7 @@
+*.pyc
+
+# Twitter Authentication
+twitterConfig.json
+
+# Checkstyle files
+pythonStyleErrors.txt
