@@ -3,6 +3,7 @@ from pymongo import MongoClient
 from datetime import datetime
 from time import time
 
+
 class MockTwitter:
     def __init__(self):
         self.client = MongoClient()
@@ -19,11 +20,11 @@ class MockTwitter:
         # clear all entries in both databases in case this module
         # has been used before (and therefore both these databases
         # would have already been created and saved)
-        self.postsTwitterAPI.remove({})
-        self.postsTwitterData.remove({})
+        self.postsTwitterAPI.delete_many({})
+        self.postsTwitterData.delete_many({})
 
         currentTime = time()
-        
+
         dataTwitterAPI = [{'Username'              : 'user1',
                            'User ID'               : '1',
                            'Account Creation Date' : datetime(2014, 1, 1, 13, 31, 36),
@@ -56,36 +57,38 @@ class MockTwitter:
                            'Timestamp'             : currentTime}]
 
         dataTwitterData = [{'Username'             : 'user2',
-                           'User ID'               : '2',
-                           'Account Creation Date' : datetime(2011, 2, 3, 10, 16, 25),
-                           'Friend Count'          : 102,
-                           'Follower Count'        : 63,
-                           'Tweet Count'           : 205,
-                           'Favorites Count'       : 12,
-                           'Organization Count'    : 5,
-                           'Image URL'             : 'https://twitterUserImages.com/user2.png',
-                           'Timestamp'             : currentTime},
+                            'User ID'              : '2',
+                            'Account Creation Date': datetime(2011, 2, 3, 10, 16, 25),
+                            'Friend Count'         : 102,
+                            'Follower Count'       : 63,
+                            'Tweet Count'          : 205,
+                            'Favorites Count'      : 12,
+                            'Organization Count'   : 5,
+                            'Image URL'            : 'https://twitterUserImages.com/user2.png',
+                            'Timestamp'            : currentTime},
                            {'Username'             : 'user3',
-                           'User ID'               : '6',
-                           'Account Creation Date' : datetime(2013, 5, 4, 22, 9, 47),
-                           'Friend Count'          : 19,
-                           'Follower Count'        : 10,
-                           'Tweet Count'           : 40,
-                           'Favorites Count'       : 5,
-                           'Organization Count'    : 2,
-                           'Image URL'             : 'https://twitterUserImages.com/user3.png',
-                           'Timestamp'             : currentTime - 4000}]
+                            'User ID'              : '6',
+                            'Account Creation Date': datetime(2013, 5, 4, 22, 9, 47),
+                            'Friend Count'         : 19,
+                            'Follower Count'       : 10,
+                            'Tweet Count'          : 40,
+                            'Favorites Count'      : 5,
+                            'Organization Count'   : 2,
+                            'Image URL'            : 'https://twitterUserImages.com/user3.png',
+                            'Timestamp'            : currentTime - 4000}]
 
         for dataPoint in dataTwitterAPI:
-            self.postsTwitterAPI.update({'Username' : dataPoint['Username'],
-                                         'User ID'  : dataPoint['User ID']},
-                                        dataPoint, upsert = True)
-                                         
+            self.postsTwitterAPI.update_one(
+                {'Username': dataPoint['Username'],
+                 'User ID' : dataPoint['User ID']},
+                {'$set': dataPoint}, upsert=True)
+
         for dataPoint in dataTwitterData:
-            self.postsTwitterData.update({'Username' : dataPoint['Username'],
-                                          'User ID'  : dataPoint['User ID']},
-                                         dataPoint, upsert = True)
-    
+            self.postsTwitterData.update_one(
+                {'Username': dataPoint['Username'],
+                 'User ID' : dataPoint['User ID']},
+                {'$set': dataPoint}, upsert=True)
+
     def search(self, request):
         if request.method == 'POST':
             search_params = {}
@@ -115,7 +118,8 @@ class MockTwitter:
                     screen_name = search_params.get('Username')
                     user_id = search_params.get('User ID')
 
-                    result = self.searchTwitter(screen_name = screen_name, user_id = user_id)
+                    result = self.searchTwitter(screen_name=screen_name,
+                                                user_id=user_id)
 
                     if type(result) == str:
                         match = None
@@ -133,13 +137,14 @@ class MockTwitter:
                                  'Image URL'             : result[8],
                                  'Timestamp'             : result[9]}
 
-                        self.postsTwitterData.update({'Username' : result[0],
-                                                      'User ID'  : result[1]},
-                                                      match, upsert = True)
+                        self.postsTwitterData.update_one(
+                            {'Username': result[0],
+                             'User ID' : result[1]},
+                            {'$set': match}, upsert=True)
 
             return match
-                
-    def searchTwitter(self, screen_name = None, user_id = None):
+
+    def searchTwitter(self, screen_name=None, user_id=None):
         search_params = {}
 
         try:
@@ -168,6 +173,6 @@ class Request:
     def __init__(self, **kwargs):
         self.method = 'POST'
         self.form = {}
-        
+
         self.form['username'] = kwargs.get('username')
         self.form['ID'] = kwargs.get('ID')

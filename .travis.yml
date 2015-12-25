@@ -1,0 +1,43 @@
+language: python
+
+services:
+   - mongodb
+
+cache:
+   directories:
+      - $HOME/.cache/pip
+
+env:
+   - FLASK_VERSION=0.9
+   - FLASK_VERSION=0.10.1
+
+# Flask support for Python 3.x
+# is still under development
+python:
+   - 2.6
+   - 2.7
+
+before_install:
+   - uname -a
+   - free -m
+   - df -h
+   - ulimit -a
+   - mkdir builds
+   - pushd builds
+   # Build into own virtualenv in order
+   # to control the build environment
+   - virtualenv --python=python venv
+   - source venv/bin/activate
+   - python -V
+   - pip install --upgrade pip setuptools
+   - pip install Flask==$FLASK_VERSION
+   - pip install pymongo
+   - pip install tweepy
+   - pip install unittest2   
+   - popd
+
+before_script:
+   - sleep 15
+   - mongo mydb_test --eval 'db.addUser("travis", "test");'
+
+script: python twitterApp/twitterUpdateTests.py

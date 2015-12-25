@@ -23,6 +23,6 @@ client = MongoClient()
 db = client['twitterData']
 
 posts = db.posts
-posts.insert(data)
+posts.insert_many(data)
 
 client.close()

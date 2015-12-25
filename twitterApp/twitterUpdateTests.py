@@ -1,6 +1,13 @@
-import unittest
+import sys
 import twitterUpdate
 import mockTwitter
+
+# Python 2.6 compatibility
+# for the @skip decorator
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
 
 
 class TwitterUpdateTestCase(unittest.TestCase):
@@ -19,18 +26,22 @@ class TwitterUpdateTestCase(unittest.TestCase):
                         in rv.data)
 
     def test_results_one(self):
-        # throws ValueError because no request has been sent
-        self.assertRaises(self.app.get, '/results')
+        # throws ValueError because a GET request has been sent,
+        # but the backend only responds to a POST request
+        self.assertRaises(ValueError, self.app.get, '/results')
 
+    @unittest.skip("need Twitter auth")
     def test_results_two(self):
         rv = self.app.post('/results', data={'username': 'twitter'})
         self.assertTrue('User has been found!' in rv.data)
 
+    @unittest.skip("need Twitter auth")
     def test_results_three(self):
         rv = self.app.post('/results', data={'username': 'twitter',
                                              'ID'      : 1})
         self.assertTrue('User has been found!' not in rv.data)
 
+    @unittest.skip("need Twitter auth")
     def test_results_four(self):
         rv = self.app.post('/results', data={'ID': 783214})
         self.assertTrue('User has been found!' in rv.data)
@@ -61,10 +72,11 @@ class TwitterUpdateTestCase(unittest.TestCase):
         rv = self.app.get('/display')
         self.assertTrue('<h1>List of Twitter Users on File</h1>' in rv.data)
 
+    @unittest.skip("need Twitter auth")
     def test_display_two(self):
         # make sure that the username 'SNICKERS' is actually not stored
         # in the database in case this file has been run before
-        status = self.posts.remove({'Username': 'SNICKERS'})
+        status = self.posts.remove_one({'Username': 'SNICKERS'})
         rv = self.app.get('/display')
         self.assertTrue('SNICKERS' not in rv.data)
 
@@ -72,10 +84,11 @@ class TwitterUpdateTestCase(unittest.TestCase):
         rv = self.app.get('/display')
         self.assertTrue('SNICKERS' in rv.data)
 
+    @unittest.skip("need Twitter auth")
     def test_display_three(self):
         # make sure that the username 'ABC123' is actually not stored
         # in the database in case this file has been run before
-        status = self.posts.remove({'Username': 'ABC123'})
+        status = self.posts.remove_one({'Username': 'ABC123'})
         rv = self.app.get('/display')
         self.assertTrue('ABC123' not in rv.data)
 
@@ -86,7 +99,8 @@ class TwitterUpdateTestCase(unittest.TestCase):
         self.assertTrue('ABC123' not in rv.data)
 
     def test_database_insert(self):
-        results = self.mockTwitter.postsTwitterData.find({'Username': 'user1'})
+        results = self.mockTwitter.postsTwitterData.find(
+            {'Username': 'user1'})
 
         try:  # make sure that the twitterData mock database does not
               # contain such a user on file
@@ -104,7 +118,8 @@ class TwitterUpdateTestCase(unittest.TestCase):
             match = results.next()
 
     def test_database_cache(self):
-        results = self.mockTwitter.postsTwitterData.find({'Username': 'user2'})
+        results = self.mockTwitter.postsTwitterData.find(
+            {'Username': 'user2'})
         match = results.next()
 
         currentTimestamp = match['Timestamp']
@@ -113,7 +128,8 @@ class TwitterUpdateTestCase(unittest.TestCase):
         self.assertTrue(type(result) == dict,
                         msg="Expected a result but none was found")
 
-        results = self.mockTwitter.postsTwitterData.find({'Username': 'user2'})
+        results = self.mockTwitter.postsTwitterData.find(
+            {'Username': 'user2'})
         match = results.next()
 
         # the timestamp on the entry for user2 will be current enough that
@@ -121,7 +137,8 @@ class TwitterUpdateTestCase(unittest.TestCase):
         self.assertTrue(currentTimestamp == match['Timestamp'])
 
     def test_database_update(self):
-        results = self.mockTwitter.postsTwitterData.find({'Username': 'user3'})
+        results = self.mockTwitter.postsTwitterData.find(
+            {'Username': 'user3'})
         match = results.next()
 
         currentTimestamp = match['Timestamp']
@@ -130,7 +147,8 @@ class TwitterUpdateTestCase(unittest.TestCase):
         self.assertTrue(type(result) == dict,
                         msg="Expected a result but none was found")
 
-        results = self.mockTwitter.postsTwitterData.find({'Username': 'user3'})
+        results = self.mockTwitter.postsTwitterData.find(
+            {'Username': 'user3'})
         match = results.next()
 
         # the timestamp on the entry for user3 will be stale, so we expect to

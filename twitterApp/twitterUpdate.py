@@ -83,9 +83,10 @@ def search():
                              'Image URL'             : result[8],
                              'Timestamp'             : result[9]}
 
-                    g.posts.update({'Username' : result[0],
-                                    'User ID'  : result[1]},
-                                   match, upsert=True)
+                    g.posts.update_one(
+                        {'Username' : result[0],
+                         'User ID'  : result[1]},
+                        {'$set': match}, upsert=True)
 
         return render_template('resultsPage.html', match=match,
                                err_message=err_message)
@@ -93,8 +94,9 @@ def search():
 
 @app.route('/display')
 def displayUsers():
-    userList = list(g.posts.find(fields={'Username' : True, 'User ID' : True,
-                                         '_id' : False},
+    userList = list(g.posts.find({'Username': True,
+                                  'User ID': True,
+                                  '_id' : False},
                                  sort=[('Username', ASCENDING)]))
     return render_template('databasePage.html', userList=userList)
 

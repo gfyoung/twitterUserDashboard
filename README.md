@@ -1,5 +1,7 @@
+[![Build Status](https://travis-ci.org/gfyoung/twitterUserDashboard.svg?branch=master)](https://travis-ci.org/gfyoung/twitterUserDashboard)
+
 # twitterNewsDashboard
-Web app to display statistics on news tweets scraped from twitter.
+Flask App to Display Information About Twitter Users
 
 # Running the website locally (for dev. work)
 * Fork and clone this repository
