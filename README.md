@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/gfyoung/twitterUserDashboard.svg?branch=master)](https://travis-ci.org/gfyoung/twitterUserDashboard)
 
+[![Build status](https://ci.appveyor.com/api/projects/status/hlv86ok9bu1l2dw3/branch/master?svg=true)](https://ci.appveyor.com/project/gfyoung/twitteruserdashboard/branch/master)
+
 # twitterNewsDashboard
 Flask App to Display Information About Twitter Users
 
