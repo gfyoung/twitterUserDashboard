@@ -10,10 +10,6 @@ services:
 # is still under development
 environment:
    matrix:
-      - PYTHON_HOME: C:\Python26
-        FLASK_VERSION: 0.9
-      - PYTHON_HOME: C:\Python26
-        FLASK_VERSION: 0.10.1
       - PYTHON_HOME: C:\Python27
         FLASK_VERSION: 0.9
       - PYTHON_HOME: C:\Python27

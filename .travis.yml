@@ -14,7 +14,6 @@ env:
 # Flask support for Python 3.x
 # is still under development
 python:
-   - 2.6
    - 2.7
 
 before_install:
